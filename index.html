@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>STORM CHASER: Probe Runner v4</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0a0a0a;overflow:hidden;font-family:'Share Tech Mono',monospace;cursor:crosshair;user-select:none;touch-action:none;overscroll-behavior:none;-webkit-touch-callout:none;margin:0;padding:0;width:100%;height:100%}
-  /* Game wrapper — sized to actual visible viewport, not behind browser chrome */
-  #game-wrap{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;overflow:hidden}
+  body{background:#0a0a0a;overflow:hidden;font-family:'Share Tech Mono',monospace;cursor:crosshair;user-select:none;touch-action:none;overscroll-behavior:none;-webkit-touch-callout:none;margin:0;padding:0;position:fixed;inset:0}
+  /* Game wrapper — JS sizes to actual visible viewport */
+  #game-wrap{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden}
   #gameCanvas{display:block;position:absolute;top:0;left:0}
   #hud{position:absolute;top:0;left:0;right:0;padding:10px 16px;display:flex;justify-content:space-between;align-items:flex-start;z-index:10;pointer-events:none}
   .hp{background:rgba(0,0,0,0.82);border:1px solid rgba(0,255,136,0.3);border-radius:3px;padding:7px 12px;color:#00ff88;text-shadow:0 0 8px rgba(0,255,136,0.4);backdrop-filter:blur(8px)}
@@ -65,10 +65,10 @@
   .mob-btn.turbo{border-color:rgba(255,136,0,0.25)}.mob-btn.turbo.active{border-color:rgba(255,136,0,0.7);background:rgba(255,136,0,0.2)}
 
   /* Utility buttons - top center */
-  #mobile-top-btns{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:51;display:flex;flex-direction:row;gap:6px;pointer-events:auto}
+  #mobile-top-btns{display:none;position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:51;flex-direction:row;gap:6px;pointer-events:auto}
   .mob-sm-btn{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.5);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .mob-sm-btn.active{border-color:rgba(0,255,136,0.5);background:rgba(0,255,136,0.1)}
-  #audio-mixer{display:none;position:absolute;top:42px;right:8px;z-index:100;background:rgba(5,8,5,0.95);border:1px solid rgba(0,255,136,0.3);border-radius:6px;padding:10px 14px;width:220px;pointer-events:auto;backdrop-filter:blur(12px)}
+  #audio-mixer{display:none;position:absolute;top:80px;right:14px;z-index:100;background:rgba(5,8,5,0.95);border:1px solid rgba(0,255,136,0.3);border-radius:6px;padding:10px 14px;width:220px;pointer-events:auto;backdrop-filter:blur(12px)}
   #audio-mixer.show{display:block}
   .mix-title{font-family:'Orbitron';font-size:10px;color:#00ff88;letter-spacing:2px;margin-bottom:8px;text-align:center}
   .mix-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
@@ -102,8 +102,11 @@
     #weather-radio{bottom:90px !important;left:6px !important;font-size:7px !important;max-width:40vw}
   }
   @media (pointer:fine) and (hover:hover){
-    #mobile-controls,#joystick-zone,#mobile-buttons,#mobile-top-btns,#turbo-zone,#joy-touch-area{display:none !important}
+    #mobile-controls,#joystick-zone,#mobile-buttons,#mobile-top-btns,#turbo-zone,#joy-touch-area{display:none}
   }
+  /* JS adds .touch to body — overrides pointer:fine for devices that support both */
+  body.touch #mobile-controls,body.touch #joystick-zone,body.touch #joy-touch-area{display:block !important}
+  body.touch #mobile-buttons,body.touch #mobile-top-btns{display:flex !important}
   /* Landscape phone extra compact */
   @media (max-height:500px) and (pointer:coarse){
     .hp{padding:1px 4px !important}
@@ -268,24 +271,24 @@
       <span class="mob-icon">⚡</span>TURBO
     </div>
   </div>
+</div>
 
-  <!-- Small top buttons -->
-  <div id="mobile-top-btns">
-    <div class="mob-sm-btn" id="mb-reload" ontouchstart="mobileReload(event)" onmousedown="mobileReload(event)">🔧</div>
-    <div class="mob-sm-btn" id="mb-shop" ontouchstart="mobileShop(event)" onmousedown="mobileShop(event)">🛒</div>
-    <div class="mob-sm-btn" id="mb-mute" ontouchstart="toggleMixer(event)" onmousedown="toggleMixer(event)">🔊</div>
-  </div>
-  <!-- Audio Mixer Panel -->
-  <div id="audio-mixer">
-    <div class="mix-title">🔊 AUDIO MIXER</div>
-    <div class="mix-row"><span>MASTER</span><input type="range" min="0" max="100" value="40" id="vol-master" oninput="setVol('master',this.value)"><span class="mix-val" id="vv-master">40</span></div>
-    <div class="mix-row"><span>ENGINE</span><input type="range" min="0" max="100" value="50" id="vol-engine" oninput="setVol('engine',this.value)"><span class="mix-val" id="vv-engine">50</span></div>
-    <div class="mix-row"><span>TIRES</span><input type="range" min="0" max="100" value="50" id="vol-tires" oninput="setVol('tires',this.value)"><span class="mix-val" id="vv-tires">50</span></div>
-    <div class="mix-row"><span>WIND</span><input type="range" min="0" max="100" value="50" id="vol-wind" oninput="setVol('wind',this.value)"><span class="mix-val" id="vv-wind">50</span></div>
-    <div class="mix-row"><span>TORNADO</span><input type="range" min="0" max="100" value="50" id="vol-tornado" oninput="setVol('tornado',this.value)"><span class="mix-val" id="vv-tornado">50</span></div>
-    <div class="mix-row"><span>RAIN</span><input type="range" min="0" max="100" value="50" id="vol-rain" oninput="setVol('rain',this.value)"><span class="mix-val" id="vv-rain">50</span></div>
-    <div class="mix-row"><span>TURBO</span><input type="range" min="0" max="100" value="50" id="vol-turbo" oninput="setVol('turbo',this.value)"><span class="mix-val" id="vv-turbo">50</span></div>
-  </div>
+<!-- Small top buttons (outside mobile-controls so they're not trapped in bottom:0 container) -->
+<div id="mobile-top-btns">
+  <div class="mob-sm-btn" id="mb-reload" ontouchstart="mobileReload(event)" onmousedown="mobileReload(event)">🔧</div>
+  <div class="mob-sm-btn" id="mb-shop" ontouchstart="mobileShop(event)" onmousedown="mobileShop(event)">🛒</div>
+  <div class="mob-sm-btn" id="mb-mute" ontouchstart="toggleMixer(event)" onmousedown="toggleMixer(event)">🔊</div>
+</div>
+<!-- Audio Mixer Panel -->
+<div id="audio-mixer">
+  <div class="mix-title">🔊 AUDIO MIXER</div>
+  <div class="mix-row"><span>MASTER</span><input type="range" min="0" max="100" value="40" id="vol-master" oninput="setVol('master',this.value)"><span class="mix-val" id="vv-master">40</span></div>
+  <div class="mix-row"><span>ENGINE</span><input type="range" min="0" max="100" value="50" id="vol-engine" oninput="setVol('engine',this.value)"><span class="mix-val" id="vv-engine">50</span></div>
+  <div class="mix-row"><span>TIRES</span><input type="range" min="0" max="100" value="50" id="vol-tires" oninput="setVol('tires',this.value)"><span class="mix-val" id="vv-tires">50</span></div>
+  <div class="mix-row"><span>WIND</span><input type="range" min="0" max="100" value="50" id="vol-wind" oninput="setVol('wind',this.value)"><span class="mix-val" id="vv-wind">50</span></div>
+  <div class="mix-row"><span>TORNADO</span><input type="range" min="0" max="100" value="50" id="vol-tornado" oninput="setVol('tornado',this.value)"><span class="mix-val" id="vv-tornado">50</span></div>
+  <div class="mix-row"><span>RAIN</span><input type="range" min="0" max="100" value="50" id="vol-rain" oninput="setVol('rain',this.value)"><span class="mix-val" id="vv-rain">50</span></div>
+  <div class="mix-row"><span>TURBO</span><input type="range" min="0" max="100" value="50" id="vol-turbo" oninput="setVol('turbo',this.value)"><span class="mix-val" id="vv-turbo">50</span></div>
 </div>
 
 <!-- Title -->
@@ -571,31 +574,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   initMobileControls();
   const isTouchDevice=('ontouchstart' in window)||(navigator.maxTouchPoints>0);
   if(isTouchDevice||window.innerWidth<=900){
+    document.body.classList.add('touch');
     const dc=document.getElementById('desktop-controls');
     const mc=document.getElementById('mobile-controls-info');
     if(dc)dc.style.display='none';
     if(mc)mc.style.display='';
   }
-  // Size game-wrap to actual visible viewport (excludes browser chrome)
+  // Size game to actual visible viewport (works in Chrome and Safari on iPad)
   const wrap=document.getElementById('game-wrap');
   function sizeGameWrap(){
-    // innerWidth/innerHeight always correctly exclude browser chrome
-    const w=window.visualViewport?window.visualViewport.width:window.innerWidth;
-    const h=window.visualViewport?window.visualViewport.height:window.innerHeight;
+    // window.innerHeight excludes browser chrome on ALL mobile browsers
+    const w=window.innerWidth;
+    const h=window.innerHeight;
+    document.body.style.width=w+'px';
+    document.body.style.height=h+'px';
     wrap.style.width=w+'px';
     wrap.style.height=h+'px';
-    // On some browsers, visualViewport reports offset when toolbar shows/hides
-    if(window.visualViewport){
-      wrap.style.top=window.visualViewport.offsetTop+'px';
-      wrap.style.left=window.visualViewport.offsetLeft+'px';
-    }
   }
   sizeGameWrap();
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',sizeGameWrap);
-    window.visualViewport.addEventListener('scroll',sizeGameWrap);
-  }
   window.addEventListener('resize',sizeGameWrap);
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',sizeGameWrap);
   window.addEventListener('orientationchange',()=>setTimeout(sizeGameWrap,350));
 });
 if(document.readyState!=='loading')initMobileControls();
@@ -3171,7 +3169,7 @@ function initGame(){
     rain:mkRain(),bolts:[],hail:[],windX:R(-50,50),
     trains:[],trainTimer:0,flyingDebris:[],
     houses:null, // set after W is created
-    nSpawn:5,spawnT:0,waveNum:0,nPU:12,puT:0,
+    nSpawn:5,spawnT:20,waveNum:0,nPU:12,puT:0,
     uAch:[],S:{cc:0,ms:0,mc:0,mefd:0,ht:0,smv:false,peakWind:0,shelterUses:0,pickups:0},
     probeIdCounter:1,_lastSheltered:false
   };
@@ -3246,8 +3244,7 @@ function spawnWave(){
   G.waveNum++;
   const elapsed=G.time;
 
-  // EF escalation — 10 minute round, gradual ramp
-  // 0-90s: EF0, 90-180s: EF1, 180-270s: EF2, 270-360s: EF3, 360-480s: EF4, 480+: EF5
+  // EF escalation — 10 minute round
   let maxEF=0;
   if(elapsed>480)maxEF=5;
   else if(elapsed>360)maxEF=4;
@@ -3256,33 +3253,51 @@ function spawnWave(){
   else if(elapsed>90)maxEF=1;
   maxEF=Math.min(maxEF,DIFFS[DIFF].me);
 
-  // Max active tornadoes — grows over 10 minutes
-  const maxActive=elapsed<120?1:elapsed<180?2:elapsed<300?3:4;
+  // Max active tornadoes — more generous
+  const maxActive=elapsed<60?2:elapsed<150?3:elapsed<300?4:elapsed<450?5:6;
   const activeCount=G.tornadoes.filter(t=>t.act).length;
   if(activeCount>=maxActive)return;
 
-  // Spawn location
-  const side=RI(0,3);let x,y;
-  switch(side){case 0:x=R(80,WW-80);y=80;break;case 1:x=WW-80;y=R(80,WH-80);break;case 2:x=R(80,WW-80);y=WH-80;break;default:x=80;y=R(80,WH-80)}
+  // Spawn location — 40% near player, 30% random in map, 30% edge
+  let x,y;
+  const spawnType=Math.random();
+  if(spawnType<0.4){
+    // Near player (800-2000px away in random direction)
+    const ang=R(0,Math.PI*2);
+    const dist=R(800,2000);
+    x=cl(G.P.x+Math.cos(ang)*dist,200,WW-200);
+    y=cl(G.P.y+Math.sin(ang)*dist,200,WH-200);
+  } else if(spawnType<0.7){
+    // Random anywhere in middle 80% of map
+    x=R(WW*0.1,WW*0.9);
+    y=R(WH*0.1,WH*0.9);
+  } else {
+    // Edge spawn (original behavior)
+    const side=RI(0,3);
+    switch(side){case 0:x=R(80,WW-80);y=80;break;case 1:x=WW-80;y=R(80,WH-80);break;case 2:x=R(80,WW-80);y=WH-80;break;default:x=80;y=R(80,WH-80)}
+  }
 
-  // EF selection — weighted toward current tier, occasionally lower
+  // EF selection
   let ef;
   if(maxEF===0)ef=0;
   else{
-    // Bias toward the current max tier but allow some variety
     const tierRoll=Math.random();
-    if(tierRoll<0.35)ef=maxEF; // 35% chance of current max
-    else if(tierRoll<0.65)ef=Math.max(0,maxEF-1); // 30% one below
-    else ef=RI(0,Math.max(0,maxEF-2)); // 35% random lower
+    if(tierRoll<0.35)ef=maxEF;
+    else if(tierRoll<0.65)ef=Math.max(0,maxEF-1);
+    else ef=RI(0,Math.max(0,maxEF-2));
   }
 
   const t=mkTornado(x,y,ef);
-  const targetDir=Math.atan2(WH/2-y+R(-1200,1200),WW/2-x+R(-1200,1200));
+  // Tornadoes near player move toward player area; others move toward center
+  const targetX=spawnType<0.4?G.P.x+R(-800,800):WW/2+R(-1200,1200);
+  const targetY=spawnType<0.4?G.P.y+R(-800,800):WH/2+R(-1200,1200);
+  const targetDir=Math.atan2(targetY-y,targetX-x);
   t.a=targetDir;t.targetA=targetDir;
   G.tornadoes.push(t);
   const efd=EF_DATA[Math.min(ef,5)];
+  const dirLabel=['N','NE','E','SE','S','SW','W','NW'][Math.round(((t.a*180/Math.PI)+360)%360/45)%8];
   showAlert(`⚠ EF${ef} TORNADO — ${efd.name}!`);
-  addRadio(`NWS ALERT: EF${ef} tornado — winds ${Math.floor(t.windSpeed)} MPH — ${['N','E','S','W'][side]}`);
+  addRadio(`NWS ALERT: EF${ef} tornado — winds ${Math.floor(t.windSpeed)} MPH — moving ${dirLabel}`);
   if(t.multi)addRadio('WARNING: Multi-vortex structure observed');
   if(t.suctionV>0)addRadio('⚠ SUCTION VORTICES REPORTED');
   camShake(4+ef*2,0.5);
@@ -3298,7 +3313,7 @@ function loop(ts){
 
     G.spawnT+=rawDt;
     // Spawn interval: starts 35s, decreases to 18s over 10 minutes
-    const spawnInterval=Math.max(18,35-G.time*0.03);
+    const spawnInterval=Math.max(12,25-G.time*0.03);
     if(G.spawnT>=spawnInterval){G.spawnT=0;spawnWave()}
     G.puT+=rawDt;if(G.puT>=G.nPU){G.puT=0;G.nPU=R(10,20);spawnPU()}
 
