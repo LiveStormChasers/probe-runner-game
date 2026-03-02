@@ -7,20 +7,20 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0a0a0a;overflow:hidden;font-family:'Share Tech Mono',monospace;cursor:crosshair;user-select:none;touch-action:none;overscroll-behavior:none;-webkit-touch-callout:none;position:fixed;width:100%;height:100%}
-  #gameCanvas{display:block;position:absolute;top:0;left:0}
-  #hud{position:fixed;top:0;left:0;right:0;padding:10px 16px;display:flex;justify-content:space-between;align-items:flex-start;z-index:10;pointer-events:none}
+  body{background:#0a0a0a;overflow:hidden;font-family:'Share Tech Mono',monospace;cursor:crosshair;user-select:none;touch-action:none;overscroll-behavior:none;-webkit-touch-callout:none;position:fixed;width:100%;height:100%;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
+  #gameCanvas{display:block;position:absolute;top:env(safe-area-inset-top,0);left:0}
+  #hud{position:fixed;top:0;left:0;right:0;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:flex-start;z-index:10;pointer-events:none}
   .hp{background:rgba(0,0,0,0.82);border:1px solid rgba(0,255,136,0.3);border-radius:3px;padding:7px 12px;color:#00ff88;text-shadow:0 0 8px rgba(0,255,136,0.4);backdrop-filter:blur(8px)}
   .hp.warn{border-color:rgba(255,60,60,0.6)}.hp.gold{border-color:rgba(255,215,0,0.5);color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,0.4)}
   .hl{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;opacity:0.6;margin-bottom:1px}
   .hv{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:700}.hv.s{font-size:13px}.hv.xs{font-size:11px}
   #hud-left,#hud-right{display:flex;gap:8px}
-  #hud-center{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;display:flex;gap:8px}
+  #hud-center{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;display:flex;gap:8px}
   #hud-bottom{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;display:flex;gap:10px;align-items:center}
   .pi{width:14px;height:14px;border-radius:50%;background:#00ff88;box-shadow:0 0 6px #00ff88;transition:all 0.3s}.pi.used{background:#333;box-shadow:none}
   .bc{width:80px;height:6px;background:#222;border-radius:3px;overflow:hidden}.bf{height:100%;transition:width 0.1s;border-radius:3px}
   .bf.turbo{background:linear-gradient(90deg,#ff6600,#ffaa00)}.bf.health{background:linear-gradient(90deg,#ff0000,#00ff88)}
-  #alert-banner{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:20;font-family:'Orbitron';font-size:16px;font-weight:700;color:#ff3c3c;text-shadow:0 0 20px rgba(255,60,60,0.8);letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity 0.3s;pointer-events:none;text-align:center;white-space:nowrap}
+  #alert-banner{position:fixed;top:calc(68px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:20;font-family:'Orbitron';font-size:16px;font-weight:700;color:#ff3c3c;text-shadow:0 0 20px rgba(255,60,60,0.8);letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity 0.3s;pointer-events:none;text-align:center;white-space:nowrap}
   #alert-banner.show{opacity:1}
   /* Probe telemetry HUD */
   #probe-telemetry{position:fixed;left:16px;top:50%;transform:translateY(-50%);z-index:12;pointer-events:none;display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:hidden}
@@ -63,7 +63,7 @@
   .mob-btn.turbo{border-color:rgba(255,136,0,0.25)}.mob-btn.turbo.active{border-color:rgba(255,136,0,0.7);background:rgba(255,136,0,0.2)}
 
   /* Utility buttons - top center */
-  #mobile-top-btns{position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:51;display:flex;flex-direction:row;gap:6px;pointer-events:auto}
+  #mobile-top-btns{position:fixed;top:calc(6px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:51;display:flex;flex-direction:row;gap:6px;pointer-events:auto}
   .mob-sm-btn{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.5);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .mob-sm-btn.active{border-color:rgba(0,255,136,0.5);background:rgba(0,255,136,0.1)}
   #turbo-zone{display:none}
@@ -96,8 +96,9 @@
     .hp{padding:1px 4px !important}
     .hv{font-size:10px !important}
     .hl{font-size:4px !important}
-    #hud{padding:1px 4px !important}
-    #hud-center{top:1px !important}
+    #hud{padding:1px 4px !important;padding-top:calc(1px + env(safe-area-inset-top)) !important;padding-left:calc(4px + env(safe-area-inset-left)) !important}
+    #hud-center{top:calc(1px + env(safe-area-inset-top)) !important}
+    #mobile-top-btns{top:calc(2px + env(safe-area-inset-top)) !important}
     #mobile-buttons{bottom:8px;right:8px;gap:7px}
     .mob-btn{width:50px;height:50px}.mob-btn .mob-icon{font-size:15px}
     #joystick-zone{width:110px;height:110px;bottom:5px;left:5px}
@@ -195,7 +196,7 @@
   </div>
   <div id="hud-right">
     <div class="hp" id="health-panel"><div class="hl">Vehicle HP — <span id="veh-name" style="color:#ffd700">CHASE TRUCK</span></div><div class="hv s" id="health-display">100%</div><div class="bc" style="margin-top:3px"><div class="bf health" id="health-bar" style="width:100%"></div></div></div>
-    <div class="hp"><div class="hl">Time</div><div class="hv s" id="time-display">3:30</div></div>
+    <div class="hp"><div class="hl">Time</div><div class="hv s" id="time-display">10:00</div></div>
     <div class="hp"><div class="hl">Wave</div><div class="hv s" id="wave-display">1</div></div>
   </div>
 </div>
@@ -322,7 +323,7 @@
 <script>
 const C=document.getElementById('gameCanvas'),X=C.getContext('2d');
 const MC=document.getElementById('minimapCanvas'),MX=MC.getContext('2d');
-const WW=7000,WH=7000,TL=64,GD=210;
+const WW=7000,WH=7000,TL=64,GD=600;
 let G={},K={},AF,LT=0,DIFF=0;
 const DIFFS=[
   {name:'ROOKIE',sr:25,dm:0.6,sm:0.8,me:3},
@@ -343,27 +344,27 @@ const UPGRADES=[
 
 // VEHICLES — famous storm chasing machines
 const VEHICLES=[
-  {id:'stock',n:'CHASE TRUCK',d:'Standard pickup — good all-rounder',c:0,i:'🚗',
+  {id:'stock',n:'CHASE TRUCK',d:'Ford F-250 pickup — reliable all-rounder',c:0,i:'🛻',
    stats:{maxSpd:280,tSpd:420,acc:330,brk:420,turn:2.9,dmgR:0,maxPr:5,maxTF:100},
-   col:{body:'#1a3a6a',cab:'#2255aa',accent:'#2a60bb'}},
-  {id:'dom1',n:'DOMINATOR 1',d:'Armored SUV — 25% less damage, built tough',c:3000,i:'🔵',
+   col:{body:'#1a3a6a',cab:'#2255aa',accent:'#2a60bb',trim:'#444'}},
+  {id:'dom1',n:'DOMINATOR 1',d:'Armored Tahoe — steel plates, reinforced glass',c:3000,i:'🛻',
    stats:{maxSpd:260,tSpd:400,acc:300,brk:400,turn:2.7,dmgR:0.25,maxPr:5,maxTF:100},
-   col:{body:'#1a1a4a',cab:'#2244aa',accent:'#3355cc'}},
-  {id:'dom2',n:'DOMINATOR 2',d:'Heavy armor plating — 40% less damage',c:5000,i:'🟡',
+   col:{body:'#0a0a2a',cab:'#151540',accent:'#1a1a50',trim:'#333'}},
+  {id:'dom2',n:'DOMINATOR 2',d:'Yellow GMC tank — steel cage, armored shutters',c:5000,i:'🛻',
    stats:{maxSpd:250,tSpd:380,acc:280,brk:380,turn:2.5,dmgR:0.4,maxPr:6,maxTF:110},
-   col:{body:'#4a4a10',cab:'#8a8a20',accent:'#aaaa30'}},
-  {id:'dom3',n:'DOMINATOR 3',d:'Ultimate armor — 55% less damage, IMAX turret',c:8000,i:'🟠',
+   col:{body:'#cc9900',cab:'#ddaa00',accent:'#eebb00',trim:'#555'}},
+  {id:'dom3',n:'DOMINATOR 3',d:'Fortress with IMAX turret — ultimate storm machine',c:8000,i:'🛻',
    stats:{maxSpd:240,tSpd:370,acc:270,brk:370,turn:2.4,dmgR:0.55,maxPr:7,maxTF:120},
-   col:{body:'#4a2a00',cab:'#aa6600',accent:'#cc8800'}},
-  {id:'tiv1',n:'TIV 1',d:'Tornado Intercept Vehicle — 60% armor, slow but unstoppable',c:6000,i:'🔴',
+   col:{body:'#aa3300',cab:'#cc4400',accent:'#dd5500',trim:'#444'}},
+  {id:'tiv1',n:'TIV 1',d:'Tornado Intercept Vehicle — red armor shell, unstoppable',c:6000,i:'🛻',
    stats:{maxSpd:200,tSpd:310,acc:220,brk:350,turn:2.0,dmgR:0.6,maxPr:5,maxTF:80},
-   col:{body:'#4a1010',cab:'#882222',accent:'#aa3333'}},
-  {id:'tiv2',n:'TIV 2',d:'TIV rebuilt — 65% armor, faster, anchoring system',c:10000,i:'⚫',
+   col:{body:'#881111',cab:'#aa2222',accent:'#cc3333',trim:'#555'}},
+  {id:'tiv2',n:'TIV 2',d:'Flat black rebuild — hydraulic anchors, wind deflectors',c:10000,i:'🛻',
    stats:{maxSpd:220,tSpd:340,acc:250,brk:380,turn:2.2,dmgR:0.65,maxPr:6,maxTF:90},
-   col:{body:'#222',cab:'#444',accent:'#555'}},
-  {id:'dow',n:'DOW TRUCK',d:'Doppler on Wheels — built-in radar, +3 probes, fragile',c:7000,i:'📡',
+   col:{body:'#1a1a1a',cab:'#2a2a2a',accent:'#333',trim:'#444'}},
+  {id:'dow',n:'DOW TRUCK',d:'Doppler On Wheels — mobile radar lab, fragile but amazing data',c:7000,i:'📡',
    stats:{maxSpd:230,tSpd:360,acc:260,brk:360,turn:2.3,dmgR:0.1,maxPr:8,maxTF:100},
-   col:{body:'#eee',cab:'#ccc',accent:'#aaa'}},
+   col:{body:'#e8e0d0',cab:'#d8d0c0',accent:'#c0b8a8',trim:'#888'}},
 ];
 const ACHS=[
   {id:'fp',n:'First Contact',d:'Deploy first probe',i:'📡',ck:()=>G.P.pDep>=1},
@@ -520,9 +521,9 @@ function mobileShop(e){
 }
 function toggleMute(e){
   if(e){e.preventDefault();e.stopPropagation();}
-  if(!SFX.started)initAudio();
+  if(!SFX.started)resumeAudio();
   SFX.muted=!SFX.muted;
-  if(SFX.ctx)SFX.master.gain.setTargetAtTime(SFX.muted?0:0.5,SFX.ctx.currentTime,0.05);
+  if(SFX.ctx)SFX.master.gain.setTargetAtTime(SFX.muted?0:0.4,SFX.ctx.currentTime,0.05);
   const btn=document.getElementById('mb-mute');
   if(btn)btn.textContent=SFX.muted?'🔇':'🔊';
 }
@@ -634,7 +635,10 @@ function initAudio(){
 }
 
 function updAudio(){
-  if(!SFX.started||SFX.muted||!SFX.ctx||SFX.ctx.state!=='running')return;
+  if(!SFX.started||SFX.muted||!SFX.ctx)return;
+  // Try to resume suspended context (iOS/iPad)
+  if(SFX.ctx.state==='suspended'){SFX.ctx.resume().catch(()=>{});return}
+  if(SFX.ctx.state!=='running')return;
   const t=SFX.ctx.currentTime;const P=G.P;
   const mph=Math.abs(P.spd)*0.6;
   const spdPct=Math.min(1,mph/250);
@@ -669,7 +673,7 @@ function updAudio(){
 }
 
 function stopAudio(){
-  if(!SFX.started)return;
+  if(!SFX.started||!SFX.ctx)return;
   const t=SFX.ctx.currentTime;
   SFX.engGain.gain.setTargetAtTime(0,t,0.3);
   SFX.tireGain.gain.setTargetAtTime(0,t,0.3);
@@ -677,6 +681,19 @@ function stopAudio(){
   SFX.turboGain.gain.setTargetAtTime(0,t,0.2);
   SFX.rumbleGain.gain.setTargetAtTime(0,t,0.3);
   SFX.rainGain.gain.setTargetAtTime(0,t,0.5);
+}
+
+function resumeAudio(){
+  if(!SFX.started){initAudio();return}
+  if(!SFX.ctx)return;
+  // Resume suspended context (common on iOS/iPad between rounds)
+  if(SFX.ctx.state==='suspended'){
+    SFX.ctx.resume().catch(()=>{});
+  }
+  // Reset master gain
+  if(!SFX.muted){
+    SFX.master.gain.setTargetAtTime(0.4,SFX.ctx.currentTime,0.1);
+  }
 }
 
 // One-shot SFX
@@ -732,8 +749,8 @@ function playPowerup(){
 }
 
 // Init audio on first user interaction
-document.addEventListener('click',()=>{initAudio();if(SFX.ctx&&SFX.ctx.state==='suspended')SFX.ctx.resume()},{once:false});
-document.addEventListener('touchstart',()=>{initAudio();if(SFX.ctx&&SFX.ctx.state==='suspended')SFX.ctx.resume()},{once:false});
+document.addEventListener('click',()=>{resumeAudio()},{once:false});
+document.addEventListener('touchstart',()=>{resumeAudio()},{once:false});
 
 // Helpers
 function D(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
@@ -1651,6 +1668,7 @@ function drawTrains(){
 
 // ========== PROBE TELEMETRY HUD ==========
 function updTelemetryHUD(){
+  if(G.tick%10!==0)return; // heavy DOM operation, throttle hard
   const container=document.getElementById('probe-telemetry');
   const activeProbes=G.probes.filter(p=>p.act);
   
@@ -1681,19 +1699,31 @@ function updTelemetryHUD(){
 }
 
 // ========== RENDERING ==========
+// Pre-compute ground tile colors at init (avoids template strings per frame)
+const _groundColors={};
+function initGroundColors(){
+  for(let x=0;x<WW;x+=TL)for(let y=0;y<WH;y+=TL){
+    const h=((x*7+y*13)%25),v=((x*3+y*11)%15);
+    _groundColors[x+'_'+y]=`rgb(${26+h+(v/3|0)},${34+h+(v/2|0)},${20+h})`;
+  }
+}
+initGroundColors();
+
+// Smoothed camera position (separate from lerp to avoid jitter)
+let _camX=WW/2,_camY=WH/2;
+
 function render(){
-  // Only resize canvas when window actually changes
   if(C.width!==window.innerWidth||C.height!==window.innerHeight){
     C.width=window.innerWidth;C.height=window.innerHeight;
   }
   const cam=G.cam;
-  // Very gentle camera follow - prevents jerky tracking
-  const camSmooth=1-Math.pow(0.06,renderDt);
-  cam.x+=(G.P.x-cam.x)*camSmooth;
-  cam.y+=(G.P.y-cam.y)*camSmooth;
+  // Frame-rate independent exponential smoothing
+  const t=1-Math.exp(-4*renderDt); // ~4Hz smoothing rate
+  _camX+=( G.P.x-_camX)*t;
+  _camY+=(G.P.y-_camY)*t;
+  cam.x=_camX;cam.y=_camY;
   X.clearRect(0,0,C.width,C.height);
   const sh=getShake();
-  // NO rounding — fractional pixels let canvas anti-alias smoothly
   const ox=-cam.x+C.width/2+sh.x,oy=-cam.y+C.height/2+sh.y;
   X.save();X.translate(ox,oy);
 
@@ -1715,14 +1745,10 @@ function render(){
 function drawGround(){
   const sx=Math.floor((G.cam.x-C.width/2)/TL)*TL-TL,sy=Math.floor((G.cam.y-C.height/2)/TL)*TL-TL;
   const ex=sx+C.width+TL*3,ey=sy+C.height+TL*3;
-  // Fill entire visible area with base green first (prevents any gaps)
-  X.fillStyle='rgb(32,40,26)';
-  X.fillRect(sx,sy,ex-sx,ey-sy);
-  // Then draw tile variations on top
+  X.fillStyle='#0e0e0e';X.fillRect(sx,sy,ex-sx,ey-sy);
   for(let x=sx;x<ex;x+=TL)for(let y=sy;y<ey;y+=TL){
-    if(x<0||x>=WW||y<0||y>=WH){X.fillStyle='#0e0e0e';X.fillRect(x,y,TL,TL);continue}
-    const h=((x*7+y*13)%25),v=((x*3+y*11)%15);
-    X.fillStyle=`rgb(${26+h+v/3|0},${34+h+v/2|0},${20+h})`;
+    if(x<0||x>=WW||y<0||y>=WH)continue;
+    X.fillStyle=_groundColors[x+'_'+y]||'#1e2818';
     X.fillRect(x,y,TL,TL);
   }
 }
@@ -1794,6 +1820,7 @@ function drawFences(){G.W.fences.forEach(f=>{
   }
 })}
 function drawCellTowers(){G.W.cellTowers.forEach(ct=>{
+  if(!inView(ct.x,ct.y,100))return;
   X.strokeStyle='#aaa';X.lineWidth=2;
   X.beginPath();X.moveTo(ct.x,ct.y+10);X.lineTo(ct.x,ct.y-40);X.stroke();
   // Cross members
@@ -1811,6 +1838,7 @@ function drawCellTowers(){G.W.cellTowers.forEach(ct=>{
 // ========== DRAW HOUSES ==========
 function drawHouses(){
   G.houses.forEach(h=>{
+    if(!inView(h.x,h.y,100))return;
     if(h.destroyed){
       // Draw foundation/slab remains
       if(G.time-h.destroyTime<8){
@@ -1875,6 +1903,7 @@ function updFlyingDebris(dt){
 }
 function drawFlyingDebris(){
   G.flyingDebris.forEach(d=>{
+    if(!inView(d.x,d.y,50))return;
     X.save();X.translate(d.x,d.y);X.rotate(d.rot);
     X.globalAlpha=cl(d.l/1.5,0,1);
     X.fillStyle=d.col;
@@ -2051,6 +2080,7 @@ function drawShelters(){
 }
 
 function drawBuildings(){G.W.buildings.forEach(b=>{
+  if(!inView(b.x+b.w/2,b.y+b.h/2,120))return;
   X.fillStyle='rgba(0,0,0,0.15)';X.fillRect(b.x+4,b.y+b.h,b.w,5);
   X.fillStyle=b.col;X.fillRect(b.x,b.y,b.w,b.h);
   if(b.type===0){
@@ -2082,6 +2112,7 @@ function drawBuildings(){G.W.buildings.forEach(b=>{
   }
 })}
 function drawWindmills(){G.W.windmills.forEach(wm=>{
+  if(!inView(wm.x,wm.y,100))return;
   wm.a+=2/60;
   const h=wm.h||40;
   // Tower
@@ -2105,7 +2136,14 @@ function drawWindmills(){G.W.windmills.forEach(wm=>{
   X.fillStyle='rgba(0,0,0,0.06)';
   X.beginPath();X.ellipse(wm.x+5,wm.y+12,6,2,0,0,Math.PI*2);X.fill();
 })}
+// Viewport culling helper
+function inView(wx,wy,margin){
+  const dx=wx-G.cam.x,dy=wy-G.cam.y;
+  return Math.abs(dx)<C.width/2+margin&&Math.abs(dy)<C.height/2+margin;
+}
+
 function drawTrees(){G.W.trees.forEach(t=>{
+  if(!inView(t.x,t.y,80))return;
   // Shadow
   X.fillStyle='rgba(0,0,0,0.08)';X.beginPath();X.ellipse(t.x+2,t.y+5,t.sz*0.5,t.sz*0.2,0,0,Math.PI*2);X.fill();
   // Trunk
@@ -2159,26 +2197,17 @@ function drawTornadoPaths(){G.tornadoes.forEach(t=>{
 function drawPowerUps(){G.pups.forEach(pu=>{if(pu.got)return;const bob=Math.sin(G.time*3+pu.x)*4,glow=(Math.sin(G.time*4)+1)/2;X.fillStyle=pu.type.col+'22';X.beginPath();X.arc(pu.x,pu.y+bob,20+glow*5,0,Math.PI*2);X.fill();X.fillStyle='rgba(0,0,0,0.6)';X.beginPath();X.arc(pu.x,pu.y+bob,14,0,Math.PI*2);X.fill();X.strokeStyle=pu.type.col;X.lineWidth=2;X.stroke();X.fillStyle='#fff';X.font='14px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(pu.type.i,pu.x,pu.y+bob+1);X.textBaseline='alphabetic'})}
 function drawHailWorld(){
   G.hail.forEach(h=>{
-    X.globalAlpha=cl(h.l*2,0,1);
-    // Hail stone with gradient
-    const grad=X.createRadialGradient(h.x-h.sz*0.2,h.y-h.sz*0.2,0,h.x,h.y,h.sz);
-    grad.addColorStop(0,'rgba(230,240,255,0.9)');
-    grad.addColorStop(0.5,'rgba(180,200,230,0.7)');
-    grad.addColorStop(1,'rgba(140,160,200,0.4)');
-    X.fillStyle=grad;
+    if(!inView(h.x,h.y,30))return;
+    const a=cl(h.l*2,0,1);
+    X.globalAlpha=a;
+    X.fillStyle='rgba(210,225,245,0.8)';
     X.beginPath();X.arc(h.x,h.y,h.sz,0,Math.PI*2);X.fill();
-    // Highlight
-    X.fillStyle='rgba(255,255,255,0.3)';
-    X.beginPath();X.arc(h.x-h.sz*0.25,h.y-h.sz*0.25,h.sz*0.3,0,Math.PI*2);X.fill();
-    // Impact splash when about to die
-    if(h.l<0.15){
-      X.strokeStyle='rgba(200,220,255,0.3)';X.lineWidth=1;
-      X.beginPath();X.arc(h.x,h.y,h.sz*2,0,Math.PI*2);X.stroke();
-    }
+    X.fillStyle='rgba(255,255,255,0.35)';
+    X.beginPath();X.arc(h.x-h.sz*0.2,h.y-h.sz*0.2,h.sz*0.35,0,Math.PI*2);X.fill();
   });
   X.globalAlpha=1;
 }
-function drawDust(){G.P.dust.forEach(d=>{X.fillStyle=`rgba(120,100,70,${Math.max(0,d.al)})`;X.beginPath();X.arc(d.x,d.y,d.sz,0,Math.PI*2);X.fill()})}
+function drawDust(){X.fillStyle='rgba(120,100,70,0.3)';G.P.dust.forEach(d=>{if(d.al>0){X.globalAlpha=d.al;X.beginPath();X.arc(d.x,d.y,d.sz,0,Math.PI*2);X.fill()}});X.globalAlpha=1}
 function drawTrail(){G.P.trail.forEach(t=>{X.globalAlpha=t.l*2;X.fillStyle=t.col;X.beginPath();X.arc(t.x,t.y,t.sz,0,Math.PI*2);X.fill()});X.globalAlpha=1}
 
 // ========== PROBES WORLD DRAWING ==========
@@ -2430,82 +2459,135 @@ function drawPlayer(){
   // Shadow
   X.fillStyle='rgba(0,0,0,0.2)';X.fillRect(-16,-10,36,24);
 
-  if(P.vehicle==='dom1'||P.vehicle==='dom2'||P.vehicle==='dom3'){
-    // === DOMINATOR SERIES — armored SUV/truck ===
-    const isD3=P.vehicle==='dom3';
-    // Body (wider, boxier)
+  if(P.vehicle==='dom1'){
+    // === DOMINATOR 1 — Dark navy armored Tahoe SUV ===
     X.fillStyle=blink?'#cc3333':c.body;X.fillRect(-17,-13,38,26);
-    // Armor plating lines
-    X.strokeStyle='rgba(255,255,255,0.08)';X.lineWidth=1;
+    X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(0,-12,20,24);
+    // Steel armor panels
+    X.strokeStyle='rgba(255,255,255,0.06)';X.lineWidth=1;
     X.strokeRect(-15,-11,34,22);
     X.beginPath();X.moveTo(-5,-13);X.lineTo(-5,13);X.stroke();
-    X.beginPath();X.moveTo(8,-13);X.lineTo(8,13);X.stroke();
-    // Cab
-    X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(4,-12,16,24);
-    // Reinforced windshield (small, armored slit)
-    X.fillStyle='rgba(140,190,255,0.35)';X.fillRect(15,-6,4,12);
-    // IMAX turret on Dom3
-    if(isD3){
-      X.fillStyle='#333';X.beginPath();X.arc(0,0,6,0,Math.PI*2);X.fill();
-      X.fillStyle='#555';X.fillRect(-2,-3,8,6); // camera housing
-      X.fillStyle='rgba(100,180,255,0.5)';X.fillRect(5,-2,3,4); // lens
-    }
-    // Armor accent stripe
-    X.fillStyle=c.accent;X.fillRect(-17,-14,38,2);X.fillRect(-17,12,38,2);
-    // Tires (heavy)
+    // Armored windshield
+    X.fillStyle='rgba(140,190,255,0.3)';X.fillRect(15,-6,4,12);
+    // Roof rack
+    X.fillStyle=c.trim;X.fillRect(2,-14,16,2);X.fillRect(2,12,16,2);
+    X.fillStyle='#555';X.fillRect(19,-11,4,22); // bumper
+    X.fillStyle='#444';X.fillRect(-18,-11,3,22);
     X.fillStyle='#111';
     X.fillRect(-14,-15,10,3);X.fillRect(-14,12,10,3);
     X.fillRect(8,-15,10,3);X.fillRect(8,12,10,3);
-    // Heavy bumper
-    X.fillStyle='#555';X.fillRect(19,-11,4,22);
-    X.fillStyle='#444';X.fillRect(-18,-11,3,22);
-    // Headlights
     X.fillStyle='#ffffcc';X.fillRect(21,-8,2,4);X.fillRect(21,4,2,4);
-    // Tail
     X.fillStyle='#cc0000';X.fillRect(-19,-9,2,4);X.fillRect(-19,5,2,4);
-    // Roof lights
     const lb=Math.sin(G.time*12)>0;
+    X.fillStyle=lb?'#ffaa00':'#331100';X.fillRect(4,-14,4,2);
+    X.fillStyle=!lb?'#ffaa00':'#331100';X.fillRect(12,-14,4,2);
+
+  } else if(P.vehicle==='dom2'){
+    // === DOMINATOR 2 — YELLOW armored GMC with steel cage ===
+    X.fillStyle=blink?'#cc3333':c.body;X.fillRect(-17,-13,38,26);
+    X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(2,-12,18,24);
+    // Prominent steel cage frame
+    X.strokeStyle='rgba(0,0,0,0.35)';X.lineWidth=1.5;
+    X.strokeRect(-15,-11,34,22);
+    for(let i=-8;i<=12;i+=7){X.beginPath();X.moveTo(i,-13);X.lineTo(i,13);X.stroke()}
+    // Armored window shutters (narrow slits)
+    X.fillStyle='rgba(40,40,40,0.7)';X.fillRect(14,-10,2,20); // shutter frame
+    X.fillStyle='rgba(140,190,255,0.2)';X.fillRect(15,-4,3,8); // tiny slit
+    X.fillStyle=c.trim;X.fillRect(19,-11,4,22);
+    X.fillStyle='#444';X.fillRect(-18,-11,3,22);
+    X.fillStyle='#0a0a0a';
+    X.fillRect(-14,-15,10,3);X.fillRect(-14,12,10,3);
+    X.fillRect(8,-15,10,3);X.fillRect(8,12,10,3);
+    X.fillStyle='#ffffcc';X.fillRect(21,-8,2,4);X.fillRect(21,4,2,4);
+    X.fillStyle='#cc0000';X.fillRect(-19,-9,2,4);X.fillRect(-19,5,2,4);
+    const lb=Math.sin(G.time*10)>0;
     X.fillStyle=lb?'#ffaa00':'#442200';X.fillRect(6,-14,4,2);
     X.fillStyle=!lb?'#ffaa00':'#442200';X.fillRect(12,-14,4,2);
     X.fillStyle=lb?'#ffaa00':'#442200';X.fillRect(6,12,4,2);
     X.fillStyle=!lb?'#ffaa00':'#442200';X.fillRect(12,12,4,2);
 
-  } else if(P.vehicle==='tiv1'||P.vehicle==='tiv2'){
-    // === TIV — Tornado Intercept Vehicle — heavy box ===
-    const isT2=P.vehicle==='tiv2';
-    // Main body — much bigger, tank-like
+  } else if(P.vehicle==='dom3'){
+    // === DOMINATOR 3 — Orange-red fortress with IMAX turret ===
+    X.fillStyle=blink?'#cc3333':c.body;X.fillRect(-17,-13,38,26);
+    X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(4,-12,16,24);
+    X.strokeStyle='rgba(0,0,0,0.2)';X.lineWidth=1;X.strokeRect(-15,-11,34,22);
+    X.fillStyle='rgba(140,190,255,0.2)';X.fillRect(15,-5,4,10);
+    // IMAX camera turret dome — the iconic feature
+    X.fillStyle='#2a2a2a';X.beginPath();X.arc(-2,0,7,0,Math.PI*2);X.fill();
+    X.fillStyle='#444';X.beginPath();X.arc(-2,0,5.5,0,Math.PI*2);X.fill();
+    X.fillStyle='#555';X.fillRect(-4,-3,8,6); // housing
+    X.fillStyle='rgba(80,160,255,0.6)';X.fillRect(3,-2,4,4); // IMAX lens glow
+    // Accent stripe
+    X.fillStyle=c.accent;X.fillRect(-17,-14,38,2);X.fillRect(-17,12,38,2);
+    X.fillStyle=c.trim;X.fillRect(19,-11,4,22);
+    X.fillStyle='#444';X.fillRect(-18,-11,3,22);
+    X.fillStyle='#0a0a0a';
+    X.fillRect(-14,-15,10,3);X.fillRect(-14,12,10,3);
+    X.fillRect(8,-15,10,3);X.fillRect(8,12,10,3);
+    X.fillStyle='#ffffcc';X.fillRect(21,-8,2,4);X.fillRect(21,4,2,4);
+    X.fillStyle='#cc0000';X.fillRect(-19,-9,2,4);X.fillRect(-19,5,2,4);
+    const lb=Math.sin(G.time*10)>0;
+    X.fillStyle=lb?'#ff6600':'#441100';X.fillRect(6,-14,4,2);
+    X.fillStyle=!lb?'#ff6600':'#441100';X.fillRect(12,-14,4,2);
+
+  } else if(P.vehicle==='tiv1'){
+    // === TIV 1 — RED massive armored box, F-450 based ===
     X.fillStyle=blink?'#cc3333':c.body;X.fillRect(-19,-15,42,30);
     // Armor panel lines
-    X.strokeStyle='rgba(255,255,255,0.06)';X.lineWidth=1;
+    X.strokeStyle='rgba(255,255,255,0.05)';X.lineWidth=1;
     for(let i=-15;i<20;i+=7){X.beginPath();X.moveTo(i,-15);X.lineTo(i,15);X.stroke()}
-    // Reinforced cab (small windshield slit)
     X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(8,-14,14,28);
-    X.fillStyle='rgba(140,190,255,0.25)';X.fillRect(16,-5,4,10); // tiny slit
-    // Hydraulic anchors (TIV2)
-    if(isT2){
-      X.fillStyle='#666';
-      X.fillRect(-18,-17,6,3);X.fillRect(-18,14,6,3); // rear anchors
-      X.fillRect(14,-17,6,3);X.fillRect(14,14,6,3); // front anchors
-    }
-    // Camera turret on top
+    X.fillStyle='rgba(140,190,255,0.2)';X.fillRect(16,-5,4,10);
+    // Deployable skirts (bottom armor flaps)
+    X.fillStyle=c.accent;X.fillRect(-17,-16,36,2);X.fillRect(-17,14,36,2);
+    // Camera turret
     X.fillStyle='#444';X.beginPath();X.arc(-4,0,5,0,Math.PI*2);X.fill();
     X.fillStyle='rgba(200,50,50,0.5)';X.beginPath();X.arc(-4,0,2,0,Math.PI*2);X.fill();
-    // Heavy tires (6 wheels)
+    // 6 heavy wheels
     X.fillStyle='#0a0a0a';
     X.fillRect(-16,-17,8,3);X.fillRect(-16,14,8,3);
     X.fillRect(0,-17,8,3);X.fillRect(0,14,8,3);
     X.fillRect(12,-17,8,3);X.fillRect(12,14,8,3);
-    // Massive bumper
     X.fillStyle='#555';X.fillRect(21,-13,5,26);
     X.fillStyle='#444';X.fillRect(-20,-13,3,26);
-    // Headlights
     X.fillStyle='#ffffcc';X.fillRect(24,-10,2,5);X.fillRect(24,5,2,5);
-    // Tails
     X.fillStyle='#cc0000';X.fillRect(-21,-10,2,4);X.fillRect(-21,6,2,4);
-    // Warning lights
     const lb=Math.sin(G.time*10)>0;
     X.fillStyle=lb?'#ff4400':'#441100';X.fillRect(10,-16,4,2);
     X.fillStyle=!lb?'#ff4400':'#441100';X.fillRect(16,-16,4,2);
+
+  } else if(P.vehicle==='tiv2'){
+    // === TIV 2 — FLAT BLACK streamlined, with hydraulic anchors ===
+    X.fillStyle=blink?'#cc3333':c.body;X.fillRect(-19,-14,42,28);
+    // More aerodynamic shape — tapered front
+    X.fillStyle=blink?'#cc3333':c.body;
+    X.beginPath();X.moveTo(21,-12);X.lineTo(25,-8);X.lineTo(25,8);X.lineTo(21,12);X.closePath();X.fill();
+    // Subtle panel lines
+    X.strokeStyle='rgba(255,255,255,0.03)';X.lineWidth=0.8;
+    for(let i=-12;i<20;i+=8){X.beginPath();X.moveTo(i,-14);X.lineTo(i,14);X.stroke()}
+    X.fillStyle=blink?'#dd4444':c.cab;X.fillRect(8,-13,14,26);
+    // Very narrow armored slit
+    X.fillStyle='rgba(140,190,255,0.15)';X.fillRect(17,-4,3,8);
+    // HYDRAULIC ANCHOR ARMS — extending outward
+    X.fillStyle='#555';X.strokeStyle='#666';X.lineWidth=1.5;
+    X.fillRect(-20,-17,7,3);X.fillRect(-20,14,7,3);
+    X.fillRect(15,-17,7,3);X.fillRect(15,14,7,3);
+    // Wind deflector wedge on front
+    X.fillStyle=c.accent;X.beginPath();X.moveTo(23,-10);X.lineTo(27,0);X.lineTo(23,10);X.closePath();X.fill();
+    // Camera turret (lower profile)
+    X.fillStyle='#333';X.beginPath();X.arc(-4,0,4,0,Math.PI*2);X.fill();
+    X.fillStyle='rgba(150,50,50,0.4)';X.beginPath();X.arc(-4,0,2,0,Math.PI*2);X.fill();
+    // 6 wheels
+    X.fillStyle='#0a0a0a';
+    X.fillRect(-16,-16,8,3);X.fillRect(-16,13,8,3);
+    X.fillRect(0,-16,8,3);X.fillRect(0,13,8,3);
+    X.fillRect(12,-16,8,3);X.fillRect(12,13,8,3);
+    X.fillStyle=c.trim;X.fillRect(-20,-12,3,24);
+    X.fillStyle='#ffffcc';X.fillRect(25,-6,2,4);X.fillRect(25,2,2,4);
+    X.fillStyle='#cc0000';X.fillRect(-21,-10,2,4);X.fillRect(-21,6,2,4);
+    const lb=Math.sin(G.time*10)>0;
+    X.fillStyle=lb?'#ff4400':'#221100';X.fillRect(10,-15,4,2);
+    X.fillStyle=!lb?'#ff4400':'#221100';X.fillRect(16,-15,4,2);
 
   } else if(P.vehicle==='dow'){
     // === DOW — Doppler On Wheels — white truck with radar dish ===
@@ -2610,7 +2692,7 @@ function drawPlayer(){
   X.restore();
 }
 
-function drawRain(){X.strokeStyle='rgba(140,170,210,0.22)';X.lineWidth=1;G.rain.forEach(d=>{X.beginPath();X.moveTo(d.x,d.y);X.lineTo(d.x+G.windX*0.015,d.y+d.len);X.stroke()})}
+function drawRain(){X.strokeStyle='rgba(140,170,210,0.22)';X.lineWidth=1;const wx=G.windX*0.015;X.beginPath();G.rain.forEach(d=>{X.moveTo(d.x,d.y);X.lineTo(d.x+wx,d.y+d.len)});X.stroke()}
 function drawLightning(){G.bolts.forEach(b=>{X.strokeStyle=`rgba(200,200,255,${b.l*3})`;X.lineWidth=3;b.segs.forEach(s=>{X.beginPath();X.moveTo(s.x1,s.y1);X.lineTo(s.x2,s.y2);X.stroke()});X.strokeStyle=`rgba(150,150,255,${b.l})`;X.lineWidth=8;b.segs.forEach(s=>{X.beginPath();X.moveTo(s.x1,s.y1);X.lineTo(s.x2,s.y2);X.stroke()})})}
 
 function drawAtmosphere(){
@@ -2624,6 +2706,7 @@ function drawAtmosphere(){
 }
 
 function drawMinimap(){
+  if(G.tick%2!==0)return; // only draw every other frame
   const mw=MC.width,mh=MC.height,sc=mw/WW;
   MX.fillStyle='#010802';MX.fillRect(0,0,mw,mh);
 
@@ -2646,15 +2729,13 @@ function drawMinimap(){
   MX.beginPath();MX.moveTo(px,0);MX.lineTo(px,mh);MX.stroke();
   MX.beginPath();MX.moveTo(0,py);MX.lineTo(mw,py);MX.stroke();
 
-  // Phosphor sweep beam with wide trailing glow
+  // Phosphor sweep beam with trailing glow
   MX.save();MX.translate(px,py);
-  // Trailing wedge glow (green phosphor afterglow)
-  const grad=MX.createConicalGradient?null:null; // fallback to manual
-  for(let i=30;i>=0;i--){
-    const a=sweepA-i*0.022;
-    const bright=i===0?0.7:0.4*Math.pow(1-i/30,1.5);
+  for(let i=12;i>=0;i--){
+    const a=sweepA-i*0.04;
+    const bright=i===0?0.7:0.35*Math.pow(1-i/12,1.5);
     MX.strokeStyle=`rgba(0,255,100,${bright})`;
-    MX.lineWidth=i===0?2.5:Math.max(0.3,1.8-i*0.04);
+    MX.lineWidth=i===0?2.5:Math.max(0.5,1.5-i*0.08);
     MX.beginPath();MX.moveTo(0,0);
     MX.lineTo(Math.cos(a)*mw*1.5,Math.sin(a)*mw*1.5);MX.stroke();
   }
@@ -2739,36 +2820,55 @@ function drawMinimap(){
   MX.fillStyle='rgba(0,255,100,0.5)';MX.font='bold 10px Orbitron';MX.textAlign='left';MX.fillText('RADAR',5,14);
 }
 
+// Cache DOM elements for HUD (avoid getElementById per frame)
+let _hudEls=null;
+function getHudEls(){
+  if(_hudEls)return _hudEls;
+  _hudEls={
+    score:document.getElementById('score-display'),
+    veh:document.getElementById('veh-name'),
+    speed:document.getElementById('speed-display'),
+    hp:document.getElementById('health-display'),
+    hpBar:document.getElementById('health-bar'),
+    turboBar:document.getElementById('turbo-bar'),
+    wave:document.getElementById('wave-display'),
+    hpPanel:document.getElementById('health-panel'),
+    time:document.getElementById('time-display'),
+    wind:document.getElementById('wind-display'),
+    tdp:document.getElementById('tdp'),td:document.getElementById('td'),
+    combo:document.getElementById('combo-panel'),comboHud:document.getElementById('combo-hud'),
+    pup:document.getElementById('pup-display'),compass:document.getElementById('compass')
+  };
+  return _hudEls;
+}
 function updateHUD(){
-  const P=G.P;
-  document.getElementById('score-display').textContent=Math.floor(P.sc).toLocaleString();
+  // Only update every 3rd frame (DOM is expensive)
+  if(G.tick%3!==0)return;
+  const P=G.P,h=getHudEls();if(!h.score)return;
+  h.score.textContent=Math.floor(P.sc).toLocaleString();
   const veh=VEHICLES.find(v=>v.id===P.vehicle)||VEHICLES[0];
-  document.getElementById('veh-name').textContent=veh.n;
-  const displayMph=Math.floor(Math.abs(P.spd)*0.6);
-  document.getElementById('speed-display').textContent=(P.spd<-1?'◀ ':'')+displayMph+' MPH';
-  document.getElementById('health-display').textContent=Math.floor(P.hp)+'%';
-  document.getElementById('health-bar').style.width=P.hp+'%';
-  document.getElementById('turbo-bar').style.width=(P.tf/P.maxTF*100)+'%';
-  document.getElementById('wave-display').textContent=G.waveNum;
-  document.getElementById('health-panel').classList.toggle('warn',P.hp<30);
+  h.veh.textContent=veh.n;
+  h.speed.textContent=(P.spd<-1?'◀ ':'')+Math.floor(Math.abs(P.spd)*0.6)+' MPH';
+  h.hp.textContent=Math.floor(P.hp)+'%';
+  h.hpBar.style.width=P.hp+'%';
+  h.turboBar.style.width=(P.tf/P.maxTF*100)+'%';
+  h.wave.textContent=G.waveNum;
+  h.hpPanel.classList.toggle('warn',P.hp<30);
   const rem=Math.max(0,GD-G.time);
-  document.getElementById('time-display').textContent=`${Math.floor(rem/60)}:${Math.floor(rem%60).toString().padStart(2,'0')}`;
-  const wm=Math.floor(Math.abs(G.windX)*0.8);
-  document.getElementById('wind-display').textContent=wm+' MPH '+(G.windX>0?'E':'W');
+  h.time.textContent=`${Math.floor(rem/60)}:${Math.floor(rem%60).toString().padStart(2,'0')}`;
+  h.wind.textContent=Math.floor(Math.abs(G.windX)*0.8)+' MPH '+(G.windX>0?'E':'W');
 
   let nearest=Infinity;
   G.tornadoes.forEach(t=>{if(t.act){const d=D(G.P,t);if(d<nearest)nearest=d}});
-  const dp=document.getElementById('tdp'),dd=document.getElementById('td');
-  if(nearest<2500){dp.style.display='';dd.textContent=(nearest*0.001).toFixed(1)+' mi';
-    if(nearest<250){dp.classList.add('warn');dd.style.color='#ff3c3c'}else{dp.classList.remove('warn');dd.style.color=''}}
-  else dp.style.display='none';
+  if(nearest<2500){h.tdp.style.display='';h.td.textContent=(nearest*0.001).toFixed(1)+' mi';
+    if(nearest<250){h.tdp.classList.add('warn');h.td.style.color='#ff3c3c'}else{h.tdp.classList.remove('warn');h.td.style.color=''}}
+  else h.tdp.style.display='none';
 
-  const cp=document.getElementById('combo-panel');
-  if(P.combo>1){cp.style.display='';cp.classList.toggle('gold',P.combo>=5);document.getElementById('combo-hud').textContent='x'+P.combo}else cp.style.display='none';
-  if(P.pu&&P.puT>0)document.getElementById('pup-display').textContent=P.pu.n+' '+Math.ceil(P.puT)+'s';
+  if(P.combo>1){h.combo.style.display='';h.combo.classList.toggle('gold',P.combo>=5);h.comboHud.textContent='x'+P.combo}else h.combo.style.display='none';
+  if(P.pu&&P.puT>0)h.pup.textContent=P.pu.n+' '+Math.ceil(P.puT)+'s';
   const dir=((P.a*180/Math.PI)+360)%360;
   const dirs=['N','NE','E','SE','S','SW','W','NW'];
-  document.getElementById('compass').textContent=`${Math.floor(dir)}° ${dirs[Math.round(dir/45)%8]}`;
+  h.compass.textContent=`${Math.floor(dir)}° ${dirs[Math.round(dir/45)%8]}`;
 }
 
 // ========== SHOP ==========
@@ -2784,6 +2884,130 @@ function openShopFromGameOver(){
   renderShop();
 }
 let shopTab='gear';
+// Draw mini vehicle preview on a small canvas
+function drawVehPreview(vid,w){
+  const cv=document.createElement('canvas');cv.width=w||60;cv.height=Math.round((w||60)*0.55);
+  const x=cv.getContext('2d');
+  const v=VEHICLES.find(z=>z.id===vid);if(!v)return cv;
+  const c=v.col;
+  const cx=cv.width/2,cy=cv.height/2;
+  x.save();x.translate(cx,cy);
+
+  if(vid==='stock'){
+    // Pickup truck - bed + cab
+    x.fillStyle=c.body;x.fillRect(-22,-8,16,16); // bed
+    x.fillStyle='#333';x.fillRect(-19,-5,5,10); // equipment
+    x.fillStyle=c.cab;x.fillRect(-6,-8,16,16); // cab
+    x.fillStyle='rgba(140,190,255,0.5)';x.fillRect(6,-5,3,10); // windshield
+    x.fillStyle=c.trim;x.fillRect(10,-7,2,14); // bumper
+    x.fillStyle='#111';x.fillRect(-18,-9,7,2);x.fillRect(-18,7,7,2);x.fillRect(2,-9,7,2);x.fillRect(2,7,7,2); // tires
+    x.fillStyle='#ffffcc';x.fillRect(11,-5,2,3);x.fillRect(11,2,2,3); // headlights
+    x.fillStyle='#ff0000';x.fillRect(-23,-6,1,3);x.fillRect(-23,3,1,3); // taillights
+    // Antenna
+    x.strokeStyle='#888';x.lineWidth=0.8;x.beginPath();x.moveTo(-8,-5);x.lineTo(-8,-14);x.stroke();
+    x.fillStyle='#f00';x.beginPath();x.arc(-8,-14,1.2,0,Math.PI*2);x.fill();
+  } else if(vid==='dom1'){
+    // Tahoe SUV - unified body, dark navy
+    x.fillStyle=c.body;x.fillRect(-20,-9,40,18);
+    x.fillStyle=c.cab;x.fillRect(-8,-8,24,16);
+    x.strokeStyle='rgba(255,255,255,0.08)';x.lineWidth=0.8;
+    x.strokeRect(-18,-7,34,14); // armor panel outline
+    x.fillStyle='rgba(140,190,255,0.3)';x.fillRect(10,-5,3,10); // narrow windshield
+    x.fillStyle=c.trim;x.fillRect(15,-8,3,16); // heavy bumper
+    x.fillStyle='#111';x.fillRect(-16,-10,8,2);x.fillRect(-16,8,8,2);x.fillRect(4,-10,8,2);x.fillRect(4,8,8,2);
+    x.fillStyle='#ffffcc';x.fillRect(16,-5,2,3);x.fillRect(16,2,2,3);
+    // Amber roof lights
+    x.fillStyle='#ffaa00';x.fillRect(0,-10,3,1.5);x.fillRect(6,-10,3,1.5);
+  } else if(vid==='dom2'){
+    // YELLOW tank — the iconic color
+    x.fillStyle=c.body;x.fillRect(-20,-9,40,18);
+    x.fillStyle=c.cab;x.fillRect(-4,-8,20,16);
+    // Steel cage frame lines
+    x.strokeStyle='rgba(0,0,0,0.3)';x.lineWidth=1;
+    x.strokeRect(-18,-7,34,14);
+    x.beginPath();x.moveTo(-6,-9);x.lineTo(-6,9);x.stroke();
+    x.beginPath();x.moveTo(6,-9);x.lineTo(6,9);x.stroke();
+    x.fillStyle='rgba(140,190,255,0.2)';x.fillRect(10,-4,3,8); // armored slit window
+    x.fillStyle=c.trim;x.fillRect(14,-8,3,16);
+    x.fillStyle='#111';x.fillRect(-16,-10,8,2);x.fillRect(-16,8,8,2);x.fillRect(4,-10,8,2);x.fillRect(4,8,8,2);
+    x.fillStyle='#ffffcc';x.fillRect(15,-5,2,3);x.fillRect(15,2,2,3);
+    x.fillStyle='#ffaa00';x.fillRect(2,-10,3,1.5);x.fillRect(8,-10,3,1.5);
+  } else if(vid==='dom3'){
+    // Orange-red fortress with IMAX dome
+    x.fillStyle=c.body;x.fillRect(-20,-9,40,18);
+    x.fillStyle=c.cab;x.fillRect(-2,-8,18,16);
+    x.strokeStyle='rgba(0,0,0,0.2)';x.lineWidth=0.8;x.strokeRect(-18,-7,34,14);
+    x.fillStyle='rgba(140,190,255,0.2)';x.fillRect(10,-4,3,8);
+    // IMAX turret dome
+    x.fillStyle='#333';x.beginPath();x.arc(-6,0,5,0,Math.PI*2);x.fill();
+    x.fillStyle='#555';x.fillRect(-8,-2,6,4);
+    x.fillStyle='rgba(80,160,255,0.5)';x.beginPath();x.arc(-3,0,2,0,Math.PI*2);x.fill(); // lens
+    x.fillStyle=c.trim;x.fillRect(14,-8,3,16);
+    x.fillStyle='#111';x.fillRect(-16,-10,8,2);x.fillRect(-16,8,8,2);x.fillRect(4,-10,8,2);x.fillRect(4,8,8,2);
+    x.fillStyle='#ffffcc';x.fillRect(15,-5,2,3);x.fillRect(15,2,2,3);
+    // Amber warning lights
+    x.fillStyle='#ff6600';x.fillRect(2,-10,3,1.5);x.fillRect(8,-10,3,1.5);
+  } else if(vid==='tiv1'){
+    // RED massive box on 6 wheels
+    x.fillStyle=c.body;x.fillRect(-22,-10,44,20);
+    x.fillStyle=c.cab;x.fillRect(6,-9,14,18);
+    x.strokeStyle='rgba(255,255,255,0.06)';x.lineWidth=0.8;
+    for(let i=-18;i<18;i+=6){x.beginPath();x.moveTo(i,-10);x.lineTo(i,10);x.stroke()} // armor panels
+    x.fillStyle='rgba(140,190,255,0.2)';x.fillRect(14,-4,3,8); // tiny slit
+    // Camera turret
+    x.fillStyle='#444';x.beginPath();x.arc(-6,0,3,0,Math.PI*2);x.fill();
+    x.fillStyle='rgba(200,50,50,0.5)';x.beginPath();x.arc(-6,0,1.5,0,Math.PI*2);x.fill();
+    // 6 wheels
+    x.fillStyle='#0a0a0a';
+    x.fillRect(-18,-12,6,2);x.fillRect(-18,10,6,2);
+    x.fillRect(-4,-12,6,2);x.fillRect(-4,10,6,2);
+    x.fillRect(10,-12,6,2);x.fillRect(10,10,6,2);
+    // Bumpers
+    x.fillStyle='#555';x.fillRect(19,-9,3,18);x.fillRect(-23,-9,3,18);
+    x.fillStyle='#ffffcc';x.fillRect(20,-6,2,4);x.fillRect(20,2,2,4);
+    x.fillStyle='#ff4400';x.fillRect(4,-11,3,1.5);x.fillRect(10,-11,3,1.5);
+  } else if(vid==='tiv2'){
+    // Flat BLACK, streamlined, with anchor arms
+    x.fillStyle=c.body;x.fillRect(-22,-9,44,18);
+    x.fillStyle=c.cab;x.fillRect(6,-8,14,16);
+    x.strokeStyle='rgba(255,255,255,0.04)';x.lineWidth=0.5;
+    x.strokeRect(-20,-7,38,14);
+    x.fillStyle='rgba(140,190,255,0.15)';x.fillRect(14,-3,3,6);
+    // Hydraulic anchor arms
+    x.fillStyle='#555';
+    x.fillRect(-20,-12,5,2);x.fillRect(-20,10,5,2);
+    x.fillRect(12,-12,5,2);x.fillRect(12,10,5,2);
+    // Camera
+    x.fillStyle='#333';x.beginPath();x.arc(-6,0,3,0,Math.PI*2);x.fill();
+    // 6 wheels
+    x.fillStyle='#0a0a0a';
+    x.fillRect(-18,-11,6,2);x.fillRect(-18,9,6,2);
+    x.fillRect(-4,-11,6,2);x.fillRect(-4,9,6,2);
+    x.fillRect(10,-11,6,2);x.fillRect(10,9,6,2);
+    x.fillStyle=c.trim;x.fillRect(19,-8,3,16);x.fillRect(-23,-8,3,16);
+    x.fillStyle='#ffffcc';x.fillRect(20,-5,2,3);x.fillRect(20,2,2,3);
+    x.fillStyle='#ff4400';x.fillRect(6,-10,3,1.5);x.fillRect(12,-10,3,1.5);
+  } else if(vid==='dow'){
+    // WHITE truck with parabolic radar dish
+    x.fillStyle=c.body;x.fillRect(-22,-8,18,16); // flatbed
+    x.fillStyle=c.cab;x.fillRect(-4,-8,18,16); // cab
+    x.fillStyle='rgba(140,190,255,0.4)';x.fillRect(8,-5,4,10); // windshield
+    // RADAR DISH — the iconic feature
+    x.fillStyle='#ccc';x.strokeStyle='#999';x.lineWidth=1;
+    x.beginPath();x.arc(-13,0,8,-1.0,1.0);x.lineTo(-16,0);x.closePath();x.fill();x.stroke();
+    x.fillStyle='#777';x.fillRect(-8,-1,4,2); // feed horn
+    // University blue stripe
+    x.fillStyle='rgba(0,80,180,0.3)';x.fillRect(-2,-6,10,12);
+    x.fillStyle='#111';x.fillRect(-18,-9,7,2);x.fillRect(-18,7,7,2);x.fillRect(4,-9,7,2);x.fillRect(4,7,7,2);
+    x.fillStyle=c.trim;x.fillRect(12,-7,2,14);
+    x.fillStyle='#ffffcc';x.fillRect(13,-5,2,3);x.fillRect(13,2,2,3);
+    // Antenna
+    x.strokeStyle='#888';x.lineWidth=0.8;x.beginPath();x.moveTo(0,-5);x.lineTo(0,-13);x.stroke();
+    x.fillStyle='#f00';x.beginPath();x.arc(0,-13,1,0,Math.PI*2);x.fill();
+  }
+  x.restore();
+  return cv;
+}
 function switchShopTab(tab){
   shopTab=tab;
   document.getElementById('tab-gear').classList.toggle('active',tab==='gear');
@@ -2810,7 +3034,15 @@ function renderShop(){
       d.className='shi'+(equipped?' equipped':owned?' bought':'');
       const s=v.stats;
       const statsHtml=`<div class="veh-stats">SPD <span>${s.maxSpd}</span> | ARM <span>${Math.round(s.dmgR*100)}%</span> | TRN <span>${s.turn.toFixed(1)}</span><br>PROBES <span>${s.maxPr}</span> | TURBO <span>${s.maxTF}</span>${v.id==='dow'?' | <span>DOPPLER</span>':''}${v.id==='tiv2'?' | <span>ANCHORS</span>':''}</div>`;
-      d.innerHTML=`<div class="shico">${v.i}</div><div class="shn">${v.n}</div><div class="shd">${v.d}</div>${statsHtml}<div class="shc">${equipped?'★ EQUIPPED':owned?'SELECT':v.c===0?'FREE':v.c.toLocaleString()+' PTS'}</div>`;
+      // Build card with canvas preview
+      const icoDiv=document.createElement('div');icoDiv.className='shico';icoDiv.style.height='38px';icoDiv.style.display='flex';icoDiv.style.alignItems='center';icoDiv.style.justifyContent='center';
+      const preview=drawVehPreview(v.id,64);
+      preview.style.imageRendering='pixelated';
+      icoDiv.appendChild(preview);
+      d.appendChild(icoDiv);
+      const rest=document.createElement('div');
+      rest.innerHTML=`<div class="shn">${v.n}</div><div class="shd">${v.d}</div>${statsHtml}<div class="shc">${equipped?'★ EQUIPPED':owned?'SELECT':v.c===0?'FREE':v.c.toLocaleString()+' PTS'}</div>`;
+      d.appendChild(rest);
       if(equipped){/* already equipped */}
       else if(owned){d.style.cursor='pointer';d.addEventListener('click',()=>equipVehicle(v.id))}
       else if(can&&v.c>0){d.style.cursor='pointer';d.addEventListener('click',()=>buyVehicle(v))}
@@ -2885,6 +3117,9 @@ function initGame(){
     probeIdCounter:1,_lastSheltered:false
   };
   G.houses=G.W.houses;
+  // Snap camera to player position (no lerp on first frame)
+  _camX=G.P.x;_camY=G.P.y;G.cam.x=G.P.x;G.cam.y=G.P.y;
+  _hudEls=null; // reset cached DOM refs
   updPI();
 }
 
@@ -2908,7 +3143,7 @@ function startGame(){
     G._persist=persist; // carry forward
   }
   G.st='play';LT=performance.now();
-  initAudio();
+  resumeAudio();
   addRadio('NWS: STORM CHASE INITIATED — GOOD LUCK OUT THERE');
   if(!persist){
     addRadio('TIP: Drive under OVERPASSES for tornado protection');
@@ -2952,19 +3187,18 @@ function spawnWave(){
   G.waveNum++;
   const elapsed=G.time;
 
-  // EF escalation based on elapsed time — slow build
-  // 0-40s: EF0 only, 40-80s: up to EF1, 80-120s: EF2, 120-160s: EF3, 160-200s: EF4, 200+: EF5
+  // EF escalation — 10 minute round, gradual ramp
+  // 0-90s: EF0, 90-180s: EF1, 180-270s: EF2, 270-360s: EF3, 360-480s: EF4, 480+: EF5
   let maxEF=0;
-  if(elapsed>200)maxEF=5;
-  else if(elapsed>160)maxEF=4;
-  else if(elapsed>120)maxEF=3;
-  else if(elapsed>80)maxEF=2;
-  else if(elapsed>40)maxEF=1;
+  if(elapsed>480)maxEF=5;
+  else if(elapsed>360)maxEF=4;
+  else if(elapsed>270)maxEF=3;
+  else if(elapsed>180)maxEF=2;
+  else if(elapsed>90)maxEF=1;
   maxEF=Math.min(maxEF,DIFFS[DIFF].me);
 
-  // Max active tornadoes — starts at 1, slowly grows
-  // 1 until 60s, 2 at 90s, 3 at 150s
-  const maxActive=elapsed<60?1:elapsed<90?1:elapsed<150?2:3;
+  // Max active tornadoes — grows over 10 minutes
+  const maxActive=elapsed<120?1:elapsed<180?2:elapsed<300?3:4;
   const activeCount=G.tornadoes.filter(t=>t.act).length;
   if(activeCount>=maxActive)return;
 
@@ -3004,8 +3238,8 @@ function loop(ts){
     if(G.time>=GD){G.P.sc+=G.P.hp*12;gameOver();return}
 
     G.spawnT+=rawDt;
-    // Spawn interval: starts at 30s, slowly decreases to min 15s over the round
-    const spawnInterval=Math.max(15,30-G.time*0.06);
+    // Spawn interval: starts 35s, decreases to 18s over 10 minutes
+    const spawnInterval=Math.max(18,35-G.time*0.03);
     if(G.spawnT>=spawnInterval){G.spawnT=0;spawnWave()}
     G.puT+=rawDt;if(G.puT>=G.nPU){G.puT=0;G.nPU=R(10,20);spawnPU()}
 
